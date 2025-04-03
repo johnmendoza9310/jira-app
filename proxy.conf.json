@@ -1,0 +1,10 @@
+{
+  "/api": {
+    "target": "https://avaldigitallabs.atlassian.net",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    }
+  }
+}

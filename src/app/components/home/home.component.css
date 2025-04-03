@@ -1,0 +1,30 @@
+table {
+  width: 100%;
+  border-collapse: collapse;  /* Asegura que las celdas estén unidas sin espacio */
+}
+
+th, td {
+  padding: 12px; /* Espaciado dentro de las celdas */
+  text-align: left; /* Alinea el texto a la izquierda */
+  border: 1px solid #ddd; /* Borde gris claro */
+}
+
+th {
+  background-color: #4CAF50; /* Color de fondo verde para el encabezado */
+  color: white; /* Color de texto blanco */
+  font-weight: bold; /* Texto en negrita */
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f2f2f2; /* Fondo gris claro para las filas pares */
+}
+
+tbody tr:hover {
+  background-color: #ddd; /* Fondo gris oscuro al pasar el ratón por encima */
+}
+
+/* Opcional: Estilos para las celdas */
+td {
+  font-size: 14px;
+  color: #333; /* Color de texto más oscuro */
+}

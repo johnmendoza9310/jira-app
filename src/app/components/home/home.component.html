@@ -1,0 +1,50 @@
+<p>Actividades</p>
+<form [formGroup]="searchForm">
+  <label>Fecha de inicio</label>
+  <input formControlName="initDate" type="date" />
+  &nbsp;
+  <label for="">Fecha de fin</label>
+  <input formControlName="endDate" type="date" />
+  <br />
+  <label for="">Número de sprint</label>
+  <input formControlName="sprintNumber" type="text" />
+
+  <br />
+
+  <label for="">Proyecto</label>
+  <input formControlName="proyectKey" type="text" name="" id="" />
+
+
+
+<button (click)="print()">imprimir</button>
+
+<button (click)="getIssuesBySprint()">obtener info</button>
+
+<br>
+<select formControlName="selectedUser" (change)="mapList()">
+  <option *ngFor="let user of userList" >
+    {{ user.displayName }}
+  </option>
+</select>
+<table>
+  <thead>
+    <tr>
+      <th>Incidencia</th>
+      <th>Titulo incidencia</th>
+      <th>Tipo de incidencia</th>
+      <th>Persona asignada</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (issue of jiraData; track $index) {
+    <tr>
+      <td>{{ issue.key }}</td>
+      <td>{{ issue.fields.summary }}</td>
+      <td>{{ issue.fields.issuetype.name }}</td>
+      <td>{{ issue.fields.assignee.displayName }}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+</form>
