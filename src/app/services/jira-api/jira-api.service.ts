@@ -7,20 +7,58 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class JiraApiService {
-  private jiraUrl = '/api/rest/api/3/search';;
+  private jiraUrl = '/api/rest/api/3/search';
 
   constructor(private http: HttpClient) {}
 
   getIssuesBySprint(sprintNumber: string): Observable<any[]> {
     const jqlQuery = `project=BFDM AND sprint="Sprint ${sprintNumber}"`;
-    const maxResults = 100; // Jira suele permitir hasta 100
+    const maxResults = 100;
     const headers = new HttpHeaders({
-      Authorization: `Basic ${btoa(environment.userEmail + ':' + environment.apiToken)}`,
+      Authorization: `Basic ${btoa(
+        environment.userEmail + ':' + environment.apiToken
+      )}`,
       Accept: 'application/json',
     });
 
     return this.fetchPaginatedResults(jqlQuery, headers, 0, maxResults);
   }
+
+  getIssuesMovedToDone(startDate: string, endDate: string): Observable<any[]> {
+    const jqlQuery = `project = BFDM AND updated >= "${startDate}" AND updated <= "${endDate}"`;
+    const maxResults = 100;
+    const headers = new HttpHeaders({
+      Authorization: `Basic ${btoa(
+        environment.userEmail + ':' + environment.apiToken
+      )}`,
+      Accept: 'application/json',
+    });
+
+    return this.fetchPaginatedResults(jqlQuery, headers, 0, maxResults);
+  }
+
+  // private fetchPaginatedResults(
+  //   jqlQuery: string,
+  //   headers: HttpHeaders,
+  //   startAt: number,
+  //   maxResults: number
+  // ): Observable<any[]> {
+  //   return this.http
+  //     .get<any>(`${this.jiraUrl}?jql=${encodeURIComponent(jqlQuery)}&startAt=${startAt}&maxResults=${maxResults}`, { headers })
+  //     .pipe(
+  //       expand(response =>
+  //         response.startAt + response.maxResults < response.total
+  //           ? this.http.get<any>(
+  //               `${this.jiraUrl}?jql=${encodeURIComponent(jqlQuery)}&startAt=${response.startAt + response.maxResults}&maxResults=${maxResults}`,
+  //               { headers }
+  //             )
+  //           : EMPTY
+  //       ),
+  //       map(response => {  console.log("espuesta antes de map", response);
+  //        return response.issues}),
+  //       reduce<any[], any>((acc, issues) => [...acc, ...issues], [])
+  //     );
+  // }
 
   private fetchPaginatedResults(
     jqlQuery: string,
@@ -29,29 +67,37 @@ export class JiraApiService {
     maxResults: number
   ): Observable<any[]> {
     return this.http
-      .get<any>(`${this.jiraUrl}?jql=${encodeURIComponent(jqlQuery)}&startAt=${startAt}&maxResults=${maxResults}`, { headers })
+      .get<any>(
+        `${this.jiraUrl}?jql=${encodeURIComponent(
+          jqlQuery
+        )}&startAt=${startAt}&maxResults=${maxResults}`,
+        { headers }
+      )
       .pipe(
-        expand(response =>
+        expand((response) =>
           response.startAt + response.maxResults < response.total
             ? this.http.get<any>(
-                `${this.jiraUrl}?jql=${encodeURIComponent(jqlQuery)}&startAt=${response.startAt + response.maxResults}&maxResults=${maxResults}`,
+                `${this.jiraUrl}?jql=${encodeURIComponent(jqlQuery)}&startAt=${
+                  response.startAt + response.maxResults
+                }&maxResults=${maxResults}`,
                 { headers }
               )
             : EMPTY
         ),
-        map(response =>
-          response.issues.map((issue: any) => {
+        map((response) => {
+          console.log('RESPUESTA ANTES DE MAP', response);
+
+          return response.issues.map((issue: any) => {
             const { fields, ...rest } = issue;
             const filteredFields = Object.fromEntries(
-              Object.entries(fields).filter(([key]) => !key.startsWith("customfield"))
+              Object.entries(fields).filter(
+                ([key]) => !key.startsWith('customfield')
+              )
             );
             return { ...rest, fields: filteredFields };
-          })
-        ),
+          });
+        }),
         reduce<any[], any>((acc, issues) => [...acc, ...issues], [])
       );
   }
-
-
-
 }

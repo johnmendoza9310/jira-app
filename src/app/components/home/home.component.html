@@ -14,37 +14,40 @@
   <label for="">Proyecto</label>
   <input formControlName="proyectKey" type="text" name="" id="" />
 
+  <button (click)="print()">imprimir</button>
 
+  <button (click)="getIssuesBySprint()">INCIDENCIAS POR SPRINT</button>
+  <button (click)="getIssuesByDateRange()">INCIDENCIAS POR FECHA</button>
 
-<button (click)="print()">imprimir</button>
+  <br />
+  <select formControlName="selectedUser" (change)="mapList()">
+    <option *ngFor="let user of userList">
+      {{ user.displayName }}
+    </option>
+  </select>
 
-<button (click)="getIssuesBySprint()">obtener info</button>
-
-<br>
-<select formControlName="selectedUser" (change)="mapList()">
-  <option *ngFor="let user of userList" >
-    {{ user.displayName }}
-  </option>
-</select>
-<table>
-  <thead>
-    <tr>
-      <th>Incidencia</th>
-      <th>Titulo incidencia</th>
-      <th>Tipo de incidencia</th>
-      <th>Persona asignada</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (issue of jiraData; track $index) {
-    <tr>
-      <td>{{ issue.key }}</td>
-      <td>{{ issue.fields.summary }}</td>
-      <td>{{ issue.fields.issuetype.name }}</td>
-      <td>{{ issue.fields.assignee.displayName }}</td>
-    </tr>
-    }
-  </tbody>
-</table>
-
+  <br>
+  <button (click)="downloadCsv()">Descargar</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Incidencia</th>
+        <th>Estado</th>
+        <th>Titulo incidencia</th>
+        <th>Tipo de incidencia</th>
+        <th>Persona asignada</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (issue of jiraData; track $index) {
+      <tr>
+        <td>{{ issue.key }}</td>
+        <td>{{ issue.fields.statusCategory.name }}</td>
+        <td>{{ issue.fields.summary }}</td>
+        <td>{{ issue.fields.issuetype.name }}</td>
+        <td>{{ issue.fields?.assignee?.displayName }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
 </form>
